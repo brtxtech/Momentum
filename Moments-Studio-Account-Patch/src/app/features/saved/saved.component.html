@@ -1,0 +1,23 @@
+<section class="account-page" aria-label="Saved posts">
+ <header class="ac-heading"><div><p class="ac-eyebrow">PRIVATE COLLECTION</p><h1>Saved moments</h1><p class="ac-muted">Only you can see the posts you've saved.</p></div><a class="ac-button" routerLink="/explore">Discover posts</a></header>
+ <div class="ac-error" role="alert" *ngIf="error()">{{error()}} <button (click)="load(true)">Retry</button></div>
+ <div class="ac-toolbar"><label class="ac-search">⌕ <input aria-label="Search saved posts" placeholder="Search saved posts or creators" [(ngModel)]="term"></label>
+  <div class="ac-filter" aria-label="Saved post type">
+   <button *ngFor="let f of ['all','image','video','text']" [class.selected]="filter()===f" (click)="filter.set($any(f))">{{f==='all'?'All':f==='image'?'Photos':f==='video'?'Videos':'Text'}}</button>
+  </div>
+ </div>
+ <p class="ac-muted" *ngIf="loading()">Loading saved posts…</p>
+ <div class="ac-saved-grid" *ngIf="filtered().length">
+  <article class="ac-saved-card" *ngFor="let row of filtered()">
+   <div class="ac-saved-picture"><img *ngIf="row.posts.url && row.posts.kind!=='video'" [src]="row.posts.url" [alt]="row.posts.caption" loading="lazy">
+    <video *ngIf="row.posts.url && row.posts.kind==='video'" [src]="row.posts.url" controls playsinline preload="metadata"></video>
+    <p *ngIf="!row.posts.url">{{row.posts.caption}}</p>
+   </div>
+   <div class="ac-saved-body"><div><strong>&#64;{{row.posts.profiles?.username || 'creator'}}</strong><p>{{row.posts.caption}}</p></div>
+    <button class="ac-button" (click)="remove(row.post_id)" [disabled]="busy()" [attr.aria-label]="'Unsave post from ' + (row.posts.profiles?.username || 'creator')">◇ Remove</button>
+   </div>
+  </article>
+ </div>
+ <div class="ac-empty" *ngIf="!loading() && !filtered().length">{{items().length?'No posts match the filter.':'Nothing saved yet. Save a post in Feed to find it here.'}}</div>
+ <div class="ac-center"><button class="ac-button" *ngIf="more()" (click)="load()" [disabled]="loading()">Load more</button></div>
+</section>

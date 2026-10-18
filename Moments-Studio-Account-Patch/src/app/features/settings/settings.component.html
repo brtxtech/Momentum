@@ -1,0 +1,28 @@
+<section class="account-page">
+ <header class="ac-heading"><div><p class="ac-eyebrow">YOUR ACCOUNT</p><h1>Settings & privacy</h1><p class="ac-muted">Personalize Moments Studio and control your privacy.</p></div></header>
+ <div *ngIf="error()" role="alert" class="ac-error">{{error()}}</div><p *ngIf="notice()" role="status" class="ac-success">{{notice()}}</p>
+ <div *ngIf="loading()" class="ac-muted">Loading preferences…</div>
+ <div class="ac-settings-layout" *ngIf="!loading()">
+  <form class="ac-panel ac-form" (ngSubmit)="save()">
+   <h2>Privacy & appearance</h2>
+   <label class="ac-switch-line"><span><strong>Private account</strong><small>Posts are available to approved followers and authorized event members.</small></span><input type="checkbox" name="private" [(ngModel)]="privateAccount"></label>
+   <label>Theme<select name="theme" [(ngModel)]="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+   <label>Language preference<select name="language" [(ngModel)]="language"><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option></select></label>
+   <label class="ac-switch-line"><span><strong>Reduce animations</strong><small>Respect reduced-motion accessibility preferences.</small></span><input type="checkbox" name="motion" [(ngModel)]="reducedMotion"></label>
+   <h2>Notifications</h2>
+   <label class="ac-switch-line"><span><strong>Email notifications</strong><small>Save your preference. Email delivery requires an enabled backend email provider.</small></span><input type="checkbox" name="email" [(ngModel)]="emailNotifications"></label>
+   <label class="ac-switch-line"><span><strong>Message notifications</strong><small>Save your preference. Push delivery needs browser permission and infrastructure.</small></span><input type="checkbox" name="messages" [(ngModel)]="messageNotifications"></label>
+   <button class="ac-button ac-primary" type="submit" [disabled]="saving()">{{saving()?'Saving…':'Save preferences'}}</button>
+  </form>
+  <div class="ac-settings-side">
+   <form class="ac-panel ac-form" (ngSubmit)="changePassword()">
+    <h2>Security</h2><p class="ac-muted">Change your password after signing in.</p>
+    <label>New password<input type="password" name="password" [(ngModel)]="password" autocomplete="new-password" minlength="12" required></label>
+    <label>Confirm password<input type="password" name="confirm" [(ngModel)]="confirmPassword" autocomplete="new-password" minlength="12" required></label>
+    <button class="ac-button" [disabled]="saving()" type="submit">Change password</button>
+   </form>
+   <section class="ac-panel ac-form"><h2>Account access</h2><button class="ac-button" [disabled]="saving()" (click)="logout()">Sign out</button>
+    <p class="ac-muted">Account deletion and full data export need a verified server-side workflow; those actions are not offered as fake buttons.</p></section>
+  </div>
+ </div>
+</section>

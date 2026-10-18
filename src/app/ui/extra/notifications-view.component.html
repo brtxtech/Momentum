@@ -1,0 +1,46 @@
+<section class="mx-page mx-activity" aria-label="Activity and notifications">
+  <header class="mx-page-heading mx-activity-title">
+<div>
+<p class="mx-eyebrow">UPDATES</p>
+<h1>Notifications <span class="mx-count" *ngIf="unread">{{unread}}</span>
+</h1>
+<p class="mx-subtitle">The moments and people you care about.</p>
+</div>
+<button class="mx-text-button" *ngIf="unread" [disabled]="busy" (click)="markAllRead.emit()">Mark all as read</button>
+</header>
+  <div class="mx-chips mx-scroll-x" role="group" aria-label="Notification filters">
+<button *ngFor="let f of filters" [class.active]="filter===f.id" (click)="choose(f.id)" [attr.aria-pressed]="filter===f.id">{{f.label}}</button>
+</div>
+  <p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+  <div *ngIf="loading" class="mx-skeleton-list" aria-label="Loading notifications">
+<div class="mx-skeleton-line" *ngFor="let x of [1,2,3,4]">
+</div>
+</div>
+  <ng-container *ngFor="let group of [{title:'Today',rows:today},{title:'This week',rows:thisWeek},{title:'Earlier',rows:earlier}]">
+    <section *ngIf="group.rows.length" class="mx-activity-group">
+<h2>{{group.title}}</h2>
+      <article *ngFor="let n of group.rows;trackBy:id" class="mx-notice" [class.unread]="!n.read">
+        <button class="mx-notice-main" (click)="open(n)" [attr.aria-label]="n.title">
+<img class="mx-avatar" [src]="n.actor?.avatarUrl || avatar" alt=""/>
+<span class="mx-notice-text">
+<b>{{n.title}}</b>
+<span *ngIf="n.description"> {{n.description}}</span>
+<small>{{n.timestamp | date:'mediumDate'}}</small>
+</span>
+<img *ngIf="n.thumbnailUrl" [src]="n.thumbnailUrl" class="mx-notice-thumbnail" alt="Related content" loading="lazy"/>
+<i *ngIf="!n.read" class="mx-notice-dot" aria-label="Unread">
+</i>
+</button>
+        <div *ngIf="n.kind==='request' && n.actionable && n.actor" class="mx-request-buttons">
+<button class="mx-btn mx-btn-primary" [disabled]="busy" (click)="followApprove.emit(n.actor.id)">Confirm</button>
+<button class="mx-btn mx-btn-soft" [disabled]="busy" (click)="followReject.emit(n.actor.id)">Delete</button>
+</div>
+      </article>
+    </section>
+  </ng-container>
+  <div *ngIf="!loading && !filtered.length" class="mx-empty">
+<span class="mx-empty-icon">♡</span>
+<b>You're all caught up</b>
+<p>New activity will appear here.</p>
+</div>
+</section>

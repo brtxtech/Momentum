@@ -1,0 +1,55 @@
+<section class="mx-page mx-insights" aria-label="Creator analytics">
+<header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">CREATOR STUDIO</p>
+<h1>Insights</h1>
+<p class="mx-subtitle">Understand your audience and celebrate every milestone.</p>
+</div>
+<button class="mx-btn mx-btn-soft" (click)="exportRequested.emit()">↓ Export report</button>
+</header>
+<div class="mx-insights-toolbar">
+<span>Overview</span>
+<nav class="mx-chips">
+<button [class.active]="range==='7d'" (click)="change('7d')">7 days</button>
+<button [class.active]="range==='30d'" (click)="change('30d')">30 days</button>
+<button [class.active]="range==='90d'" (click)="change('90d')">90 days</button>
+</nav>
+</div>
+<p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+<div class="mx-insights-cards">
+<article class="mx-insight-card" *ngFor="let m of metrics">
+<span>{{m.label}}</span>
+<strong>{{m.format==='percent'?(m.value|number:'1.0-1')+'%':(m.value|number)}}</strong>
+<small *ngIf="m.delta!==undefined" [class.positive]="m.delta>=0">{{m.delta>=0?'+':''}}{{m.delta|number:'1.0-1'}}% vs previous period</small>
+</article>
+</div>
+<section class="mx-chart-card mx-card">
+<div class="mx-section-head">
+<div>
+<p class="mx-eyebrow">AUDIENCE GROWTH</p>
+<h2>Engagement over time</h2>
+</div>
+<small class="mx-muted">{{range==='7d'?'Last 7 days':range==='30d'?'Last 30 days':'Last 90 days'}}</small>
+</div>
+<div class="mx-bar-chart" role="img" aria-label="Engagement bar chart">
+<div class="mx-bar-col" *ngFor="let p of series">
+<div class="mx-bar" [style.height]="barHeight(p.value)" [attr.title]="p.label+': '+p.value" aria-hidden="true">
+</div>
+<small>{{p.label}}</small>
+</div>
+<div *ngIf="!series.length" class="mx-chart-empty">No statistics for this period.</div>
+</div>
+</section>
+<section class="mx-card mx-top-content">
+<div class="mx-section-head">
+<h2>Top content</h2>
+<small class="mx-muted">Ordered by views</small>
+</div>
+<button *ngFor="let p of topContent;trackBy:id" (click)="contentOpen.emit(p.id)" class="mx-top-item">
+<span>{{p.title}}</span>
+<b>{{p.views|number}} views</b>
+</button>
+<div *ngIf="!topContent.length" class="mx-muted mx-small">Publish content to see engagement statistics.</div>
+</section>
+<p class="mx-insights-note">Metrics are supplied by your backend. This visual layer does not invent views, followers or engagement.</p>
+</section>

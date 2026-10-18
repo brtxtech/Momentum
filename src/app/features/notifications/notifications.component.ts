@@ -1,8 +1,30 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StudioStore } from '../../core/store.service';
-import { PageHeaderComponent } from '../../shared/page-header.component';
-@Component({ standalone: true, imports: [CommonModule, PageHeaderComponent], template: `<ms-page-header title="Activity" subtitle="Your latest interactions and updates." eyebrow="NOTIFICATIONS"><button class="btn btn-outline" (click)="store.markAllRead()">Mark all read</button></ms-page-header><div class="panel"><div *ngFor="let item of store.notifications()" class="activity-row" [class.unread]="!item.read"><span class="activity-icon">♡</span><div><strong>{{item.message}}</strong><p class="muted">{{item.createdAt}}</p></div></div></div>` })
+import { ActivityPremiumComponent } from '../../ui/extra/notifications-view.component';
+import { UiNotification } from '../../ui/extra/view-models';
+import { NotificationItem } from '../../core/models';
+@Component({ standalone: true, imports: [CommonModule, ActivityPremiumComponent], template: `<ms-activity-premium [notices]="notices" [busy]="false" [loading]="false" [error]="''" (notificationOpen)="open($event)" (markRead)="markRead($event)" (markAllRead)="markAllRead()" (filterChanged)="setFilter($event)"></ms-activity-premium>` })
 export class NotificationsComponent {
+    filter = 'all';
     constructor(public store: StudioStore) { }
+    get notices(): UiNotification[] {
+        return this.store.notifications().map((notification: NotificationItem) => ({
+            id: notification.id,
+            kind: 'like',
+            title: notification.message,
+            description: notification.message,
+            timestamp: notification.createdAt,
+            read: notification.read,
+            actionable: true
+        }));
+    }
+    open(notification: UiNotification) { this.store.announce(`Opened notification ${notification.id}`); }
+    markRead(id: string) {
+        this.store.notifications.update((items: NotificationItem[]) =>
+            items.map((item: NotificationItem) => item.id === id ? { ...item, read: true } : item)
+        );
+    }
+    markAllRead() { this.store.markAllRead(); }
+    setFilter(filter: string) { this.filter = filter; }
 }

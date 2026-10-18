@@ -2,9 +2,70 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StudioStore } from '../../core/store.service';
-import { PageHeaderComponent } from '../../shared/page-header.component';
-import { PostCardComponent } from '../../shared/post-card.component';
-@Component({ standalone: true, imports: [CommonModule, RouterLink, PageHeaderComponent, PostCardComponent], template: `<ms-page-header title="Your world, beautifully connected" subtitle="The people and celebrations that make life memorable." eyebrow="YOUR FEED"><a routerLink="/create" class="btn btn-primary">＋ Share a moment</a></ms-page-header><div class="feed-layout"><section><div class="stories-strip"><a *ngFor="let story of store.stories()" routerLink="/stories" class="story-bubble"><img [src]="store.image(story.image)" [alt]="story.author+' story'"><span>{{story.author}}</span></a></div><div class="feed-posts"><ms-post-card *ngFor="let post of store.filtered()" [post]="post"/></div><p *ngIf="!store.filtered().length" class="muted">No moments match your search.</p></section><aside class="right-rail"><div class="panel"><p class="eyebrow">CURATED FOR YOU</p><h3>Celebrate beautifully</h3><p class="muted">Your moments deserve a space as meaningful as the memories themselves.</p><a routerLink="/invitations" class="btn btn-outline">Open invitation studio →</a></div><div class="panel"><p class="eyebrow">UPCOMING</p><div *ngFor="let event of store.events()" class="mini-event"><img [src]="store.image(event.cover)" alt=""><div><strong>{{event.title}}</strong><small>{{event.date}}</small></div></div><a routerLink="/events">View all events →</a></div></aside></div>` })
+
+@Component({
+    standalone: true,
+    imports: [CommonModule, RouterLink],
+    template: `
+    <div class="ms-feed-layout">
+      <main class="ms-feed-column">
+        <nav class="ms-feed-tabs" aria-label="Feed selection">
+          <button class="active" type="button">For you</button>
+          <button type="button">Following</button>
+        </nav>
+
+        <section class="ms-stories-strip" aria-label="Stories">
+          <button *ngFor="let story of store.stories(); let i = index" type="button" class="ms-story" [class.viewed]="story.viewed" [attr.aria-label]="story.author + ' story'" routerLink="/stories">
+            <span class="ms-story-ring" [class.viewed]="story.viewed">
+              <img [src]="store.image(story.image)" [alt]="story.author" />
+            </span>
+            <span class="ms-story-name">{{ story.author }}</span>
+          </button>
+        </section>
+
+        <section class="ms-feed-posts">
+          <article *ngFor="let post of store.filtered().slice(0, 6)" class="ms-post">
+            <header class="ms-post-header">
+              <img class="ms-avatar" [src]="store.image(post.avatar)" [alt]="post.author" />
+              <div class="ms-post-byline">
+                <strong>{{ post.author }} <span *ngIf="post.author === 'Ariana' || post.author === 'Noah'">✓</span></strong>
+                <small>{{ post.createdAt }}</small>
+              </div>
+              <button type="button" aria-label="Post options">···</button>
+            </header>
+
+            <div class="ms-post-media">
+              <img [src]="store.image(post.image)" [alt]="post.caption" loading="lazy" />
+            </div>
+
+            <div class="ms-post-actions">
+              <button type="button" [attr.aria-label]="post.liked ? 'Unlike post' : 'Like post'" (click)="store.toggleLike(post.id)">{{ post.liked ? '♥' : '♡' }}</button>
+              <button type="button" aria-label="Comment">♧</button>
+              <button type="button" aria-label="Share">➤</button>
+              <button type="button" class="ms-push" aria-label="Save post" (click)="store.toggleSave(post.id)">{{ post.saved ? '▣' : '▢' }}</button>
+            </div>
+
+            <strong class="ms-post-likes">{{ post.likes | number }} likes</strong>
+            <p class="ms-caption"><b>{{ post.author }}</b> {{ post.caption }}</p>
+            <button class="ms-comments-link" type="button">View all {{ post.comments.length }} comments</button>
+          </article>
+        </section>
+      </main>
+
+      <aside class="ms-suggestions" aria-label="Suggested accounts">
+        <h3>Suggested for you</h3>
+        <div *ngFor="let person of store.posts().slice(0, 4)" class="ms-suggestion">
+          <img class="ms-avatar" [src]="store.image(person.avatar)" [alt]="person.author" />
+          <div>
+            <strong>{{ person.author }}</strong>
+            <small>{{ '@' + person.handle }}</small>
+          </div>
+          <button type="button">Follow</button>
+        </div>
+      </aside>
+    </div>
+  `
+})
 export class FeedComponent {
     constructor(public store: StudioStore) { }
 }

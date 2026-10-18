@@ -1,0 +1,27 @@
+<section class="account-page">
+ <header class="ac-help-hero"><p class="ac-eyebrow">MOMENTS STUDIO SUPPORT</p><h1>How can we help?</h1><p>Answers, privacy guidance and a direct support request form.</p>
+  <label class="ac-search ac-search-hero">⌕ <input aria-label="Search help articles" placeholder="Search your question" [(ngModel)]="term"></label>
+ </header>
+ <div class="ac-error" *ngIf="error()" role="alert">{{error()}} <a routerLink="/cloud">Cloud setup</a></div>
+ <p class="ac-success" *ngIf="notice()" role="status">{{notice()}}</p>
+ <div class="ac-help-layout"><div>
+  <div class="ac-filter ac-help-filters" aria-label="Help categories"><button *ngFor="let c of ['All','Privacy','Account','Social','Safety','Media']" [class.selected]="category()===c" (click)="category.set(c)">{{c}}</button></div>
+  <div class="ac-faq"><article class="ac-faq-item" *ngFor="let article of filtered()">
+   <button type="button" [attr.aria-expanded]="expanded()===article.title" (click)="expanded.set(expanded()===article.title?null:article.title)"><span><small>{{article.category}}</small><strong>{{article.title}}</strong></span><span>{{expanded()===article.title?'−':'+'}}</span></button>
+   <p *ngIf="expanded()===article.title">{{article.answer}}</p>
+  </article></div>
+  <div class="ac-empty" *ngIf="!filtered().length">No matching articles. Try another search.</div>
+ </div>
+ <aside class="ac-settings-side">
+  <form *ngIf="signedIn()" class="ac-panel ac-form" (ngSubmit)="send()"><h2>Contact support</h2><p class="ac-muted">Support requests are saved to your authenticated account.</p>
+   <label>Subject<input name="subject" [(ngModel)]="subject" maxlength="150" placeholder="How can we help?" required></label>
+   <label>Details<textarea name="body" [(ngModel)]="body" maxlength="5000" rows="5" placeholder="Describe what happened. Do not share passwords." required></textarea></label>
+   <button class="ac-button ac-primary" type="submit" [disabled]="sending()">{{sending()?'Sending…':'Submit request'}}</button>
+  </form>
+  <div class="ac-panel ac-form" *ngIf="!signedIn()"><h2>Need help with your account?</h2><p class="ac-muted">Sign in first to submit a private support ticket.</p><a class="ac-button ac-primary" routerLink="/cloud">Sign in</a></div>
+  <div class="ac-panel ac-form" *ngIf="signedIn()"><h2>Your recent requests</h2><p class="ac-muted" *ngIf="loading()">Loading tickets…</p>
+   <p *ngIf="!loading()&&!tickets().length" class="ac-muted">No requests submitted yet.</p>
+   <article class="ac-ticket" *ngFor="let t of tickets()"><strong>{{t.subject}}</strong><small>{{t.created_at | date:'mediumDate'}}</small></article>
+  </div>
+ </aside></div>
+</section>

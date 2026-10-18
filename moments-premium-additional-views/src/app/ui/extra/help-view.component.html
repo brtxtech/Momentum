@@ -1,0 +1,85 @@
+<section class="mx-page mx-help" aria-label="Help and safety">
+<header class="mx-help-hero">
+<span class="mx-eyebrow">WE'RE HERE TO HELP</span>
+<h1>How can we help?</h1>
+<p>Find answers, get support, and discover how to keep your moments safe.</p>
+<div class="mx-search-field mx-help-search">
+<span>⌕</span>
+<input [(ngModel)]="search" type="search" placeholder="Search the help center" aria-label="Search help articles"/>
+</div>
+</header>
+<div class="mx-help-shortcuts">
+<button (click)="category='Account'">
+<span>♙</span>
+<b>Account & login</b>
+<small>Passwords, access, profiles</small>
+</button>
+<button (click)="category='Privacy'">
+<span>◇</span>
+<b>Privacy & safety</b>
+<small>Visibility, blocking, reporting</small>
+</button>
+<button (click)="category='Events'">
+<span>✧</span>
+<b>Events & galleries</b>
+<small>Guests, QR codes, sharing</small>
+</button>
+<button (click)="showContact=true">
+<span>✉</span>
+<b>Contact support</b>
+<small>We're ready to help you</small>
+</button>
+</div>
+<section class="mx-help-content">
+<div class="mx-section-head">
+<h2>Frequently asked questions</h2>
+<span class="mx-muted">{{filtered.length}} articles</span>
+</div>
+<nav class="mx-chips mx-scroll-x" aria-label="Help categories">
+<button *ngFor="let c of categories" [class.active]="category===c" (click)="category=c">{{c}}</button>
+</nav>
+<div class="mx-faq-list">
+<article class="mx-faq" *ngFor="let a of filtered;trackBy:id">
+<button (click)="toggle(a)" [attr.aria-expanded]="expanded.has(a.id)">
+<span>
+<small>{{a.category}}</small>
+<b>{{a.title}}</b>
+</span>
+<span>{{expanded.has(a.id)?'−':'＋'}}</span>
+</button>
+<p *ngIf="expanded.has(a.id)">{{a.body}}</p>
+</article>
+</div>
+<div *ngIf="!filtered.length&&!loading" class="mx-empty">
+<b>No matching articles</b>
+<p>Try another term, or send a support request.</p>
+</div>
+</section>
+<section class="mx-safety-panel">
+<div>
+<p class="mx-eyebrow">YOUR SAFETY MATTERS</p>
+<h2>A kinder space for every moment.</h2>
+<p>Control who can contact you and report anything that makes you uncomfortable.</p>
+</div>
+<div class="mx-safety-actions">
+<button class="mx-btn mx-btn-primary" (click)="safetyReport.emit()">Report a concern</button>
+<button class="mx-btn mx-btn-soft" (click)="privacyOpen.emit()">Privacy settings</button>
+</div>
+</section>
+<section class="mx-contact-panel mx-card" *ngIf="showContact">
+<div class="mx-section-head">
+<h2>Contact support</h2>
+<button class="mx-plain-icon" (click)="showContact=false" aria-label="Close">×</button>
+</div>
+<form (ngSubmit)="submit()">
+<label>Subject<input [(ngModel)]="subject" name="subject" required minlength="3" maxlength="150" placeholder="What's the issue?"/>
+</label>
+<label>Tell us more<textarea [(ngModel)]="body" name="body" required minlength="10" maxlength="5000" rows="5" placeholder="Describe the problem and what you expected.">
+</textarea>
+</label>
+<button class="mx-btn mx-btn-primary" [disabled]="busy||subject.trim().length<3||body.trim().length<10">Send support request</button>
+<p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+<p *ngIf="success" role="status" class="mx-success">{{success}}</p>
+</form>
+</section>
+</section>

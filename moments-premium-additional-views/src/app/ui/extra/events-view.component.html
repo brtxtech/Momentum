@@ -1,0 +1,86 @@
+<section class="mx-page mx-events" aria-label="Events">
+  <header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">CELEBRATE</p>
+<h1>Events & gatherings</h1>
+<p class="mx-subtitle">Turn beautiful moments into unforgettable shared memories.</p>
+</div>
+<button class="mx-btn mx-btn-primary" (click)="showCreate=!showCreate">＋ Create event</button>
+</header>
+  <section class="mx-event-banner">
+<div>
+<span class="mx-banner-label">MOMENTS STUDIO</span>
+<h2>Every celebration<br>has a story.</h2>
+<p>Plan, invite and gather everyone's memories in one place.</p>
+<button (click)="showCreate=true" class="mx-btn mx-btn-light">Plan an event →</button>
+</div>
+<div class="mx-banner-art" aria-hidden="true">
+<span>✦</span>
+<span>✧</span>
+<span>✳</span>
+</div>
+</section>
+  <form *ngIf="showCreate" class="mx-card mx-create-event" (ngSubmit)="create()">
+<div class="mx-section-head">
+<h2>New event</h2>
+<button class="mx-plain-icon" type="button" aria-label="Close" (click)="showCreate=false">×</button>
+</div>
+<div class="mx-form-grid">
+<label>Event name<input [(ngModel)]="title" name="title" required maxlength="120" placeholder="Our celebration" />
+</label>
+<label>Date and time<input [(ngModel)]="date" type="datetime-local" name="date" required/>
+</label>
+<label>Location<input [(ngModel)]="location" name="location" maxlength="140" placeholder="Venue or city"/>
+</label>
+<label>Visibility<select [(ngModel)]="privacy" name="privacy">
+<option value="private">Private</option>
+<option value="public">Public</option>
+</select>
+</label>
+</div>
+<label>Description<textarea [(ngModel)]="description" name="description" maxlength="1200" rows="3" placeholder="What's special about this day?">
+</textarea>
+</label>
+<button class="mx-btn mx-btn-primary" type="submit" [disabled]="busy || !title.trim() || !date">Create event</button>
+</form>
+  <div class="mx-workspace-controls">
+<nav class="mx-segment-tabs" aria-label="Event tabs">
+<button [class.active]="tab==='upcoming'" (click)="tab='upcoming'">Upcoming</button>
+<button [class.active]="tab==='attending'" (click)="tab='attending'">Attending</button>
+<button [class.active]="tab==='past'" (click)="tab='past'">Past</button>
+</nav>
+<div class="mx-search-field">
+<span>⌕</span>
+<input type="search" aria-label="Search events" placeholder="Find events" [(ngModel)]="search"/>
+</div>
+</div>
+  <p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+  <div class="mx-event-grid">
+<article class="mx-event-card" *ngFor="let e of list;trackBy:id">
+<button class="mx-event-cover" (click)="eventOpen.emit(e.id)" [attr.aria-label]="'Open event '+e.title">
+<img *ngIf="e.coverUrl" [src]="e.coverUrl" [alt]="e.title" loading="lazy"/>
+<span *ngIf="!e.coverUrl" class="mx-cover-placeholder">✧</span>
+<span class="mx-privacy-tag">{{e.privacy==='private'?'🔒 Private':'Public'}}</span>
+</button>
+<div class="mx-event-copy">
+<small class="mx-event-date">{{e.startsAt | date:'EEEE · MMM d, y · h:mm a'}}</small>
+<button class="mx-event-title" (click)="eventOpen.emit(e.id)">{{e.title}}</button>
+<p>{{e.description || 'Gather memories, photos and messages from your guests.'}}</p>
+<div class="mx-event-meta">
+<span>⌖ {{e.location||'Location to be announced'}}</span>
+<span *ngIf="e.guests!==undefined">♧ {{e.guests}} guests</span>
+</div>
+<div class="mx-event-buttons">
+<button class="mx-btn" [class.mx-btn-primary]="!e.going" [class.mx-btn-soft]="e.going" (click)="eventRsvp.emit(e.id)" [disabled]="busy">{{e.going?'Going ✓':'RSVP'}}</button>
+<button class="mx-btn mx-btn-soft" (click)="eventInvite.emit(e.id)">Invite</button>
+<button class="mx-plain-icon" [attr.aria-label]="'Share '+e.title" (click)="eventShare.emit(e.id)">↗</button>
+</div>
+</div>
+</article>
+</div>
+  <div *ngIf="!loading && !list.length" class="mx-empty">
+<span class="mx-empty-icon">✧</span>
+<b>No events here yet</b>
+<p>Create a celebration or browse another tab.</p>
+</div>
+</section>

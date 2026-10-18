@@ -1,16 +1,21 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { StudioStore } from '../../core/store.service';
-import { PageHeaderComponent } from '../../shared/page-header.component';
-@Component({ standalone: true, imports: [CommonModule, FormsModule, PageHeaderComponent], template: `<ms-page-header title="Your celebrations" subtitle="Every unforgettable occasion starts here." eyebrow="EVENTS"><button class="btn btn-primary" (click)="show.set(!show())">＋ New event</button></ms-page-header><form *ngIf="show()" (ngSubmit)="create()" class="panel form-stack"><h3>Create an event</h3><label>Event title<input name="title" [(ngModel)]="title" required maxlength="100"></label><label>Date<input name="date" [(ngModel)]="date" type="date" required></label><label>Location<input name="place" [(ngModel)]="place" maxlength="120"></label><label>Description<textarea name="description" [(ngModel)]="description" maxlength="500"></textarea></label><button class="btn btn-primary" type="submit">Save event locally</button></form><div class="card-grid"><article *ngFor="let event of store.events()" class="event-card"><img [src]="store.image(event.cover)" [alt]="event.title"><div><span class="pill">{{event.privacy}}</span><h3>{{event.title}}</h3><p>{{event.description}}</p><p class="muted">{{event.date}} · {{event.location}}</p></div></article></div>` })
+import { EventsPremiumComponent } from '../../ui/extra/events-view.component';
+import { UiEvent } from '../../ui/extra/view-models';
+import { EventItem } from '../../core/models';
+@Component({ standalone: true, imports: [CommonModule, EventsPremiumComponent], template: `<ms-events-premium [events]="events" [loading]="false" [busy]="false" [error]="''" (eventOpen)="open($event)" (eventCreate)="create($event)" (eventRsvp)="rsvp($event)" (eventInvite)="invite($event)" (eventShare)="share($event)"></ms-events-premium>` })
 export class EventsComponent {
-    show = signal(false);
-    title = '';
-    date = '';
-    place = '';
-    description = '';
     constructor(public store: StudioStore) { }
-    create() { if (!this.title.trim() || !this.date)
-        return; this.store.addEvent({ id: crypto.randomUUID(), title: this.title.trim().slice(0, 100), date: this.date, location: this.place.slice(0, 120), description: this.description.slice(0, 500), cover: 9, privacy: 'private' }); this.show.set(false); this.title = ''; this.date = ''; this.place = ''; this.description = ''; }
+    get events(): UiEvent[] {
+        return this.store.events().map((event: EventItem) => ({ id: event.id, title: event.title, description: event.description, coverUrl: this.store.image(event.cover), startsAt: event.date || new Date().toISOString(), location: event.location, privacy: event.privacy, guests: 18, going: true, status: 'upcoming' }));
+    }
+    open(eventId: string) { this.store.announce(`Opening event ${eventId}`); }
+    create(payload: { title: string; date: string; location: string; privacy: 'private' | 'public'; description: string }) {
+        const event = { id: crypto.randomUUID(), title: payload.title, date: payload.date, location: payload.location || 'To be announced', description: payload.description || 'A beautiful celebration planned with love.', cover: 9, privacy: payload.privacy };
+        this.store.addEvent(event); this.store.announce('Event created');
+    }
+    rsvp(eventId: string) { this.store.announce(`RSVP confirmed for ${eventId}`); }
+    invite(eventId: string) { this.store.announce(`Invitations sent for ${eventId}`); }
+    share(eventId: string) { this.store.announce(`Sharing event ${eventId}`); }
 }

@@ -1,0 +1,111 @@
+<section class="mx-page mx-messages" [class.mx-chat-open]="mobileChat" aria-label="Messages">
+  <aside class="mx-inbox">
+    <header class="mx-inbox-header">
+<div>
+<p class="mx-eyebrow">DIRECT</p>
+<h1>Messages</h1>
+</div>
+<button class="mx-icon-button" (click)="showNew = !showNew" [attr.aria-expanded]="showNew" aria-label="New conversation" title="New message">✎</button>
+</header>
+    <div class="mx-search-field">
+<span aria-hidden="true">⌕</span>
+<input aria-label="Search conversations" type="search" placeholder="Search conversations" [(ngModel)]="inboxSearch">
+</div>
+    <div *ngIf="showNew" class="mx-recipient-panel">
+      <div class="mx-section-head">
+<strong>New message</strong>
+<button class="mx-plain-icon" aria-label="Close search" (click)="showNew=false">×</button>
+</div>
+      <label for="mx-recipient">To</label>
+<input id="mx-recipient" placeholder="Search by username or name" [ngModel]="recipientTerm" (ngModelChange)="searchRecipients($event)">
+      <div class="mx-recipient-results">
+<button *ngFor="let p of filteredRecipients; trackBy:id" class="mx-person-line" (click)="chooseRecipient(p.id)">
+<img [src]="p.avatarUrl || avatar" alt=""/>
+<span>
+<b>{{p.username}}</b>
+<small>{{p.displayName}}</small>
+</span>
+<span class="mx-blue">Chat →</span>
+</button>
+<p class="mx-muted mx-small" *ngIf="!filteredRecipients.length">Search for an account to start a conversation.</p>
+</div>
+    </div>
+    <div class="mx-section-head mx-inbox-subhead">
+<h2>Chats</h2>
+<span class="mx-muted mx-small">{{conversations.length}} conversations</span>
+</div>
+    <div class="mx-inbox-list" role="list">
+      <button role="listitem" *ngFor="let c of filteredConversations; trackBy:id" class="mx-conversation" [class.selected]="c.id===activeId" (click)="open(c.id)">
+        <span class="mx-avatar-wrap">
+<img class="mx-avatar" [src]="c.avatarUrl || avatar" alt=""/>
+<i *ngIf="c.online" class="mx-online-dot">
+</i>
+</span>
+        <span class="mx-conversation-text">
+<span class="mx-conversation-title">
+<b>{{c.title}}</b>
+<time>{{c.updatedAt}}</time>
+</span>
+<span class="mx-preview">
+<span>{{c.latest || 'Start your conversation'}}</span>
+<b *ngIf="c.unread" class="mx-unread-number">{{c.unread}}</b>
+</span>
+</span>
+      </button>
+      <div *ngIf="!loading && !filteredConversations.length" class="mx-empty">
+<span class="mx-empty-icon">✉</span>
+<b>No conversations yet</b>
+<p>Search for a creator and start a new conversation.</p>
+<button class="mx-btn mx-btn-primary" (click)="showNew=true">New message</button>
+</div>
+    </div>
+  </aside>
+  <main class="mx-chat" aria-label="Active conversation">
+    <ng-container *ngIf="selected as chat; else emptyChat">
+      <header class="mx-chat-header">
+<button class="mx-back" (click)="mobileChat=false" aria-label="Back to conversations">←</button>
+<img [src]="chat.avatarUrl || avatar" alt="" class="mx-avatar">
+<div>
+<b>{{chat.title}}</b>
+<small>{{chat.online ? 'Active now' : chat.subtitle || 'Conversation'}}</small>
+</div>
+<button class="mx-icon-button mx-ml-auto" [attr.aria-label]="'Options for '+chat.title" (click)="conversationMenu.emit(chat.id)">⋯</button>
+</header>
+      <div class="mx-chat-thread" role="log" aria-live="polite">
+<button class="mx-link mx-load-old" (click)="olderMessages.emit(chat.id)">Load earlier messages</button>
+        <article *ngFor="let m of messages; trackBy:id" class="mx-chat-row" [class.mine]="m.senderId===currentUserId">
+          <div class="mx-bubble">
+<p *ngIf="m.text">{{m.text}}</p>
+<img *ngIf="m.attachmentType==='image' && m.attachmentUrl" [src]="m.attachmentUrl" alt="Shared photo" loading="lazy">
+<video *ngIf="m.attachmentType==='video' && m.attachmentUrl" [src]="m.attachmentUrl" controls playsinline preload="metadata">
+</video>
+<a *ngIf="m.attachmentType==='file' && m.attachmentUrl" [href]="m.attachmentUrl" target="_blank" rel="noopener noreferrer">Open attachment</a>
+<small>{{m.sentAt}} <span *ngIf="m.read && m.senderId===currentUserId">· Seen</span>
+</small>
+</div>
+<button *ngIf="m.senderId===currentUserId" class="mx-message-delete" (click)="messageDelete.emit(m.id)" aria-label="Delete my message" title="Delete">×</button>
+        </article>
+<div *ngIf="typing" class="mx-typing">Typing <span>•••</span>
+</div>
+<p class="mx-muted mx-centered" *ngIf="!messages.length && !loading">Say hello to begin the conversation.</p>
+      </div>
+      <form class="mx-chat-composer" (ngSubmit)="send()">
+<label class="mx-upload-icon" aria-label="Attach media">
+<input type="file" accept="image/*,video/*" (change)="pickFile($event)"/>
+<span>＋</span>
+</label>
+<input [(ngModel)]="draft" name="message" maxlength="4000" placeholder="Message..." [disabled]="busy" aria-label="New message" autocomplete="off">
+<button type="submit" class="mx-send" [disabled]="!draft.trim() || busy">Send</button>
+</form>
+    </ng-container>
+    <ng-template #emptyChat>
+<div class="mx-chat-intro">
+<span>✉</span>
+<h2>Your messages</h2>
+<p>Share moments and stay close to the people you care about.</p>
+<button class="mx-btn mx-btn-primary" (click)="showNew=true;mobileChat=false">Send a message</button>
+</div>
+</ng-template>
+    <p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+  </main>
+</section>

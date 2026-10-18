@@ -1,0 +1,1 @@
+Apply to a COPY of the Moments-Studio-Reels-Implemented project root. Replace the corresponding files; run npm install, npm test, npm run build. Apply Supabase migration 007 only after 001–006 and RLS review in staging. See docs/ACCOUNT-IMPLEMENTATION.md.

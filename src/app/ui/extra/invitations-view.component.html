@@ -1,0 +1,90 @@
+<section class="mx-page mx-invitations" aria-label="Invitation designer">
+  <header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">THE CREATIVE STUDIO</p>
+<h1>Invitations</h1>
+<p class="mx-subtitle">Design an invitation as memorable as the day itself.</p>
+</div>
+<button class="mx-btn mx-btn-soft" (click)="activeTab=activeTab==='design'?'saved':'design'">{{activeTab==='design'?'My designs':'Back to editor'}}</button>
+</header>
+  <p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+  <div *ngIf="activeTab==='design'" class="mx-invitation-layout">
+<aside class="mx-editor mx-card">
+<h2>Customize your invitation</h2>
+<label>Event<select [(ngModel)]="eventId" aria-label="Choose event">
+<option value="">Select an event</option>
+<option *ngFor="let e of events;trackBy:id" [value]="e.id">{{e.title}}</option>
+</select>
+</label>
+<label>Heading<input [(ngModel)]="title" maxlength="100"/>
+</label>
+<label>Names or hosts<input [(ngModel)]="names" maxlength="120" placeholder="Names of the hosts"/>
+</label>
+<label>Message<textarea [(ngModel)]="body" rows="4" maxlength="1000">
+</textarea>
+</label>
+<label>Date and time<input [(ngModel)]="dateLine" placeholder="Saturday, June 14 · 5:00 PM" maxlength="120"/>
+</label>
+<label>Venue<input [(ngModel)]="venue" maxlength="120" placeholder="Venue, city"/>
+</label>
+<div class="mx-field-label">Choose a style</div>
+<div class="mx-theme-grid">
+<button type="button" *ngFor="let t of themes" class="mx-theme-option" [class.active]="theme===t.id" (click)="theme=t.id">
+<span class="mx-theme-swatch" [class]="'mx-swatch-'+t.id">
+</span>
+<strong>{{t.label}}</strong>
+<small>{{t.description}}</small>
+</button>
+</div>
+<div class="mx-editor-actions">
+<button class="mx-btn mx-btn-primary" [disabled]="!eventId||!title.trim()||busy" (click)="save()">Save design</button>
+<button class="mx-btn mx-btn-soft" (click)="invitationPrint.emit(draft)">Print / PDF ↗</button>
+</div>
+<p class="mx-muted mx-small">Saving and exporting are handled by your app's Supabase service and print workflow.</p>
+</aside>
+  <div class="mx-invitation-preview">
+<div class="mx-preview-top">
+<b>Live preview</b>
+<span>Portrait · Print-ready layout</span>
+</div>
+<div class="mx-invite-card" [class]="'mx-invite-'+theme">
+<div class="mx-invite-corner">✧</div>
+<div class="mx-invite-inner">
+<span class="mx-invite-kicker">YOU ARE CORDIALLY INVITED</span>
+<h2>{{title||'Your Celebration'}}</h2>
+<h3 *ngIf="names">{{names}}</h3>
+<p>{{body}}</p>
+<div class="mx-invite-divider">✦</div>
+<strong *ngIf="dateLine">{{dateLine}}</strong>
+<span *ngIf="venue">{{venue}}</span>
+</div>
+<div class="mx-invite-footer">MOMENTS STUDIO</div>
+</div>
+</div>
+</div>
+  <div *ngIf="activeTab==='saved'" class="mx-saved-invitations">
+<div class="mx-section-head">
+<h2>Saved designs</h2>
+<button class="mx-btn mx-btn-primary" (click)="selectedId='';activeTab='design'">Create new</button>
+</div>
+<div class="mx-invite-list">
+<article class="mx-card" *ngFor="let i of invitations;trackBy:id">
+<div class="mx-invitation-mini" [class]="'mx-invite-'+i.theme">
+<b>{{i.title}}</b>
+<span>✧</span>
+</div>
+<h3>{{i.title}}</h3>
+<small>{{i.updatedAt}}</small>
+<div class="mx-card-actions">
+<button class="mx-btn mx-btn-primary" (click)="edit(i)">Edit</button>
+<button class="mx-btn mx-btn-soft" (click)="invitationShare.emit(i.id)">Share</button>
+<button class="mx-plain-icon" (click)="invitationDelete.emit(i.id)" aria-label="Delete invitation">×</button>
+</div>
+</article>
+</div>
+<div *ngIf="!invitations.length&&!loading" class="mx-empty">
+<b>No saved invitations</b>
+<p>Start with one of the six signature themes.</p>
+</div>
+</div>
+</section>

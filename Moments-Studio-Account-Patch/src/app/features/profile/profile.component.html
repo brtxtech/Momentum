@@ -1,0 +1,49 @@
+<section class="account-page account-profile" aria-label="Your profile">
+ <div class="ac-status" *ngIf="loading()">Loading your profile…</div>
+ <div class="ac-error" role="alert" *ngIf="error()">{{error()}} <a routerLink="/cloud">Check connection</a></div>
+ <p class="ac-success" role="status" *ngIf="notice()">{{notice()}}</p>
+ <ng-container *ngIf="profile() as p">
+  <header class="ac-profile-head">
+   <div class="ac-avatar-outer">
+    <div class="ac-avatar ac-avatar-lg"><img *ngIf="avatar();else initials" [src]="avatar()" alt="Your profile picture"><ng-template #initials>{{(p.display_name || p.username).slice(0,1).toUpperCase()}}</ng-template></div>
+    <label class="ac-avatar-upload">Change photo<input type="file" accept="image/jpeg,image/png,image/webp" (change)="uploadAvatar($event)" [disabled]="busy()" hidden></label>
+   </div>
+   <div class="ac-profile-info">
+    <div class="ac-profile-title"><h1>{{p.username}}</h1><button class="ac-button" (click)="editing.set(!editing())">{{editing()?'Cancel':'Edit profile'}}</button><a class="ac-button" routerLink="/settings">Settings</a></div>
+    <div class="ac-stats"><span><strong>{{counts().posts}}</strong> posts</span><span><strong>{{counts().followers}}</strong> followers</span><span><strong>{{counts().following}}</strong> following</span></div>
+    <strong>{{p.display_name}}</strong><p class="ac-bio">{{p.bio || 'Add a biography so people can get to know you.'}}</p>
+    <small class="ac-muted">{{p.is_private?'Private account · approved followers can view your posts':'Public account'}}</small>
+   </div>
+  </header>
+  <form class="ac-panel ac-form" *ngIf="editing()" (ngSubmit)="save()">
+   <h2>Edit profile</h2><label>Username<input name="username" [(ngModel)]="editUsername" maxlength="30" required pattern="[a-z0-9_]{3,30}"></label>
+   <label>Display name<input name="displayname" [(ngModel)]="editName" maxlength="80"></label>
+   <label>Biography<textarea name="bio" [(ngModel)]="editBio" maxlength="500" rows="3"></textarea></label>
+   <button class="ac-button ac-primary" type="submit" [disabled]="busy()">Save changes</button>
+  </form>
+  <div class="ac-profile-tabs" role="tablist" aria-label="Profile media">
+   <button role="tab" [attr.aria-selected]="tab()==='posts'" [class.selected]="tab()==='posts'" (click)="changeTab('posts')">▦ Posts</button>
+   <button role="tab" [attr.aria-selected]="tab()==='reels'" [class.selected]="tab()==='reels'" (click)="changeTab('reels')">▷ Reels</button>
+   <a routerLink="/saved">◇ Saved (private)</a>
+  </div>
+  <div class="ac-media-grid" *ngIf="media().length;else noMedia">
+   <button type="button" *ngFor="let item of media()" (click)="selected.set(item)" [attr.aria-label]="item.caption || 'View publication'" class="ac-media-tile">
+    <img *ngIf="item.url && item.kind!=='video'" [src]="item.url" loading="lazy" [alt]="item.caption || 'Post image'">
+    <video *ngIf="item.url && item.kind==='video'" [src]="item.url" muted preload="metadata" playsinline></video>
+    <div *ngIf="!item.url" class="ac-tile-text">{{item.caption || 'Text post'}}</div>
+    <span class="ac-media-type" *ngIf="item.kind==='video'">▷</span>
+   </button>
+  </div>
+  <div class="ac-modal-backdrop" *ngIf="selected() as item" (click)="selected.set(null)" role="presentation">
+   <div class="ac-modal" role="dialog" aria-modal="true" aria-label="Publication details" (click)="$event.stopPropagation()">
+    <div class="ac-modal-top"><strong>Publication</strong><button class="ac-button" aria-label="Close publication" (click)="selected.set(null)">✕</button></div>
+    <img *ngIf="item.url && item.kind==='image'" [src]="item.url" [alt]="item.caption">
+    <video *ngIf="item.url && item.kind==='video'" [src]="item.url" controls playsinline></video>
+    <p>{{item.caption}}</p><small class="ac-muted">{{item.created_at | date:'medium'}}</small>
+    <button class="ac-button ac-danger" (click)="deleteSelected()" [disabled]="busy()">Delete my post</button>
+   </div>
+  </div>
+  <ng-template #noMedia><div class="ac-empty" *ngIf="!busy()">No {{tab()==='reels'?'Reels':'posts'}} yet. <a routerLink="/create">Create your first post</a>.</div></ng-template>
+  <div class="ac-center"><button class="ac-button" *ngIf="more()" (click)="load()" [disabled]="busy()">{{busy()?'Loading…':'Load more'}}</button></div>
+ </ng-container>
+</section>

@@ -1,0 +1,41 @@
+Moments Studio — Premium 12-view Angular UI package
+
+Files excluding this report: 34
+Physical lines excluding this report: 2032
+
+FILE                                                                                  LINES
+--------------------------------------------------------------------------------------------
+README.md                                                                                90
+docs/DESIGN-SPEC.md                                                                      67
+docs/QA-RESULTS.md                                                                       21
+examples/messages-page.example.ts                                                       108
+src/app/ui/extra/events-view.component.html                                              86
+src/app/ui/extra/events-view.component.ts                                                24
+src/app/ui/extra/gallery-view.component.html                                             45
+src/app/ui/extra/gallery-view.component.ts                                               24
+src/app/ui/extra/help-view.component.html                                                85
+src/app/ui/extra/help-view.component.ts                                                  18
+src/app/ui/extra/index.ts                                                                13
+src/app/ui/extra/insights-view.component.html                                            55
+src/app/ui/extra/insights-view.component.ts                                              15
+src/app/ui/extra/invitations-view.component.html                                         90
+src/app/ui/extra/invitations-view.component.ts                                           24
+src/app/ui/extra/messages-view.component.html                                           111
+src/app/ui/extra/messages-view.component.ts                                              63
+src/app/ui/extra/moments-extra-views.css                                                468
+src/app/ui/extra/notifications-view.component.html                                       46
+src/app/ui/extra/notifications-view.component.ts                                         33
+src/app/ui/extra/people-view.component.html                                              46
+src/app/ui/extra/people-view.component.ts                                                25
+src/app/ui/extra/profile-view.component.html                                             77
+src/app/ui/extra/profile-view.component.ts                                               20
+src/app/ui/extra/qr-view.component.html                                                  67
+src/app/ui/extra/qr-view.component.ts                                                    18
+src/app/ui/extra/saved-view.component.html                                               45
+src/app/ui/extra/saved-view.component.ts                                                 16
+src/app/ui/extra/settings-view.component.html                                           134
+src/app/ui/extra/settings-view.component.ts                                              22
+src/app/ui/extra/view-models.ts                                                          16
+tests/angular-type-shims.d.ts                                                            11
+tests/tsconfig.syntax.json                                                                1
+tests/ui-structure.test.mjs                                                              48

@@ -1,2 +1,44 @@
-<div class="app-shell"><aside class="sidebar" [class.open]="navOpen()"><div class="brand"><img src="assets/logo.svg" alt="Moments Studio logo"><div><strong>MOMENTS</strong><small>STUDIO</small></div></div><div class="sidebar-scroll"><div class="nav-section" *ngFor="let section of sections"><p class="nav-label">{{section.title}}</p><a *ngFor="let item of section.items" [routerLink]="item[0]" routerLinkActive="active" (click)="close()"><span class="nav-icon">{{item[1]}}</span>{{item[2]}}<span class="count" *ngIf="item[0]==='/notifications' && store.unread()">{{store.unread()}}</span></a></div></div><div class="sidebar-foot"><span class="online-dot"></span> Supabase connected workspace <small>Authentication required for personal data</small></div></aside><div class="sidebar-backdrop" *ngIf="navOpen()" (click)="close()"></div><div class="workspace"><header class="topbar"><button class="icon-button mobile-menu" aria-label="Open menu" (click)="navOpen.set(true)">☰</button><a routerLink="/feed" class="topbrand">MOMENTS <span>STUDIO</span></a><div class="top-search"><span>⌕</span><input aria-label="Search moments" placeholder="Search moments, people, memories..." [ngModel]="store.search()" (ngModelChange)="store.search.set($event)"></div><a class="top-action" routerLink="/create">＋ <span>Create</span></a><a class="top-action" routerLink="/profile" aria-label="Profile">◉</a></header><main class="main-content"><router-outlet/></main></div><nav class="bottom-nav" aria-label="Mobile navigation"><a routerLink="/feed" routerLinkActive="active">⌂<small>Home</small></a><a routerLink="/explore" routerLinkActive="active">⌕<small>Explore</small></a><a routerLink="/create" routerLinkActive="active">＋<small>Create</small></a><a routerLink="/messages" routerLinkActive="active">✉<small>Chats</small></a><a routerLink="/profile" routerLinkActive="active">♙<small>Profile</small></a><a routerLink="/social" class="nav-link">☁ Live Social</a></nav><div class="toast" role="status" *ngIf="store.toast()" (click)="store.toast.set('')">{{store.toast()}} <span>×</span></div></div>
-<nav aria-label="Cloud tools" style="position:fixed;bottom:8px;right:8px;z-index:100;background:#20212b;padding:10px;border-radius:12px;display:flex;gap:12px"><a routerLink="/cloud" style="color:white">Cloud setup</a><a routerLink="/feed" style="color:white">Live feed</a><a routerLink="/social" style="color:white">Social tools</a></nav>
+<div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
+    <aside class="sidebar" [class.open]="navOpen()" [class.collapsed]="sidebarCollapsed()">
+        <div class="brand">
+            <button class="brand-toggle" type="button" aria-label="Toggle sidebar" (click)="toggleSidebar()">☰</button>
+            <img src="assets/logo.svg" alt="Moments Studio logo">
+            <div class="brand-copy"><strong>MOMENTS</strong><small>STUDIO</small></div>
+        </div>
+        <div class="sidebar-scroll">
+            <div class="nav-section" *ngFor="let section of sections">
+                <p class="nav-label">{{section.title}}</p>
+                <a *ngFor="let item of section.items" [routerLink]="item[0]" routerLinkActive="active"
+                    (click)="close()">
+                    <span class="nav-icon">{{item[1]}}</span>
+                    <span class="nav-text">{{item[2]}}</span>
+                    <span class="count" *ngIf="item[0]==='/notifications' && store.unread()">{{store.unread()}}</span>
+                </a>
+            </div>
+        </div>
+        <div class="sidebar-foot"><span class="online-dot"></span> <span class="sidebar-foot-text">Supabase connected
+                workspace</span><small>Authentication required for personal data</small></div>
+    </aside>
+    <div class="sidebar-backdrop" *ngIf="navOpen()" (click)="close()"></div>
+    <div class="workspace">
+        <header class="topbar">
+            <button class="icon-button mobile-menu" aria-label="Open menu" (click)="navOpen.set(true)">☰</button>
+            <a routerLink="/feed" class="topbrand">MOMENTS <span>STUDIO</span></a>
+            <div class="top-search"><span>⌕</span><input aria-label="Search moments"
+                    placeholder="Search moments, people, memories..." [ngModel]="store.search()"
+                    (ngModelChange)="store.search.set($event)"></div>
+            <a class="top-action" routerLink="/create">＋ <span>Create</span></a>
+            <a class="top-action" routerLink="/profile" aria-label="Profile">◉</a>
+        </header>
+        <main class="main-content"><router-outlet /></main>
+    </div>
+    <nav class="bottom-nav" aria-label="Mobile navigation"><a routerLink="/feed"
+            routerLinkActive="active">⌂<small>Home</small></a><a routerLink="/explore"
+            routerLinkActive="active">⌕<small>Explore</small></a><a routerLink="/create"
+            routerLinkActive="active">＋<small>Create</small></a><a routerLink="/messages"
+            routerLinkActive="active">✉<small>Chats</small></a><a routerLink="/profile"
+            routerLinkActive="active">♙<small>Profile</small></a><a routerLink="/social" class="nav-link">☁ Live
+            Social</a></nav>
+    <div class="toast" role="status" *ngIf="store.toast()" (click)="store.toast.set('')">{{store.toast()}}
+        <span>×</span></div>
+</div>

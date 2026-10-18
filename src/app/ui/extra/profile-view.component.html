@@ -1,0 +1,77 @@
+<section class="mx-page mx-profile" aria-label="User profile">
+  <ng-container *ngIf="profile as p; else profileEmpty">
+<header class="mx-profile-top">
+<div class="mx-profile-image-wrap">
+<img [src]="p.avatarUrl||avatar" [alt]="p.username+' profile picture'" class="mx-profile-image"/>
+<label *ngIf="p.owner" class="mx-avatar-edit" aria-label="Upload profile picture">
+<input type="file" accept="image/jpeg,image/png,image/webp" (change)="pickAvatar($event)"/>
+<span>✎</span>
+</label>
+</div>
+<div class="mx-profile-details">
+<div class="mx-profile-identity">
+<h1>{{p.username}} <span *ngIf="p.verified" class="mx-blue" aria-label="Verified">✦</span>
+</h1>
+<div class="mx-profile-buttons">
+<button *ngIf="p.owner" class="mx-btn mx-btn-soft" (click)="editProfile.emit()">Edit profile</button>
+<button *ngIf="!p.owner" class="mx-btn mx-btn-primary" (click)="followToggle.emit(p.id)">Follow</button>
+<button *ngIf="!p.owner" class="mx-btn mx-btn-soft" (click)="messageOpen.emit(p.id)">Message</button>
+<button class="mx-btn mx-btn-soft" (click)="profileShare.emit(p.id)">Share profile</button>
+</div>
+</div>
+<div class="mx-profile-stats">
+<div>
+<strong>{{p.postCount | number}}</strong> posts</div>
+<button (click)="followersOpen.emit()">
+<strong>{{p.followerCount|number}}</strong> followers</button>
+<button (click)="followingOpen.emit()">
+<strong>{{p.followingCount|number}}</strong> following</button>
+</div>
+<div class="mx-profile-bio">
+<strong>{{p.displayName}}</strong>
+<p>{{p.bio}}</p>
+<a *ngIf="p.website" [href]="p.website" target="_blank" rel="noopener noreferrer">{{p.website}}</a>
+<small *ngIf="p.private">◈ Private account</small>
+</div>
+</div>
+</header>
+  <div class="mx-highlights" *ngIf="p.owner || p.highlights?.length">
+<button *ngFor="let h of p.highlights;trackBy:id" (click)="highlightOpen.emit(h.id)">
+<span>
+<img *ngIf="h.coverUrl" [src]="h.coverUrl" [alt]="h.title"/>
+<span *ngIf="!h.coverUrl">✧</span>
+</span>
+<b>{{h.title}}</b>
+</button>
+<button *ngIf="p.owner" (click)="highlightCreate.emit()">
+<span class="mx-highlight-new">＋</span>
+<b>New</b>
+</button>
+</div>
+  <nav class="mx-profile-tabs" aria-label="Profile content">
+<button [class.active]="tab==='posts'" (click)="chooseTab('posts')">▦ Posts</button>
+<button [class.active]="tab==='reels'" (click)="chooseTab('reels')">▷ Reels</button>
+<button [class.active]="tab==='tagged'" (click)="chooseTab('tagged')">▧ Tagged</button>
+<button *ngIf="p.owner" [class.active]="tab==='saved'" (click)="chooseTab('saved')">◇ Saved</button>
+</nav>
+  <div class="mx-profile-grid">
+<button *ngFor="let item of displayedMedia;trackBy:id" (click)="postOpen.emit(item.id)" [attr.aria-label]="item.caption||'Open post'">
+<img [src]="item.thumbUrl||item.url" [alt]="item.caption||'Profile post'" loading="lazy"/>
+<span *ngIf="item.type==='video'">▶</span>
+</button>
+</div>
+<div class="mx-empty" *ngIf="!displayedMedia.length&&!loading">
+<span class="mx-empty-icon">▦</span>
+<b>No {{tab}} yet</b>
+<p>Your favorite moments will appear here.</p>
+</div>
+</ng-container>
+  <ng-template #profileEmpty>
+<div *ngIf="!loading" class="mx-empty">
+<span class="mx-empty-icon">♙</span>
+<b>No profile loaded</b>
+<p>Sign in to see your account.</p>
+</div>
+</ng-template>
+<p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+</section>

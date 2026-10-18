@@ -1,0 +1,67 @@
+<section class="mx-page mx-qr" aria-label="QR Studio">
+<header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">SHARE & CONNECT</p>
+<h1>QR Studio</h1>
+<p class="mx-subtitle">One beautiful scan away from a profile, memory, or celebration.</p>
+</div>
+</header>
+<div class="mx-qr-layout">
+<section class="mx-qr-editor mx-card">
+<h2>Create a QR code</h2>
+<label>Destination<select [(ngModel)]="kind">
+<option value="event">Event page</option>
+<option value="profile">Profile page</option>
+<option value="post">Post</option>
+<option value="invite">Private invitation token</option>
+</select>
+</label>
+<label>{{kind==='invite'?'Invitation / event':kind==='profile'?'Profile ID':kind==='post'?'Post ID':'Event'}}<select *ngIf="targetOptions.length" [(ngModel)]="targetId">
+<option value="">Choose an event</option>
+<option *ngFor="let e of targetOptions;trackBy:id" [value]="e.id">{{e.title}}</option>
+</select>
+<input *ngIf="!targetOptions.length" [(ngModel)]="targetId" placeholder="Enter the ID of an authorized record"/>
+</label>
+<button class="mx-btn mx-btn-primary" [disabled]="!targetId.trim()||busy" (click)="request()">Generate QR code</button>
+<p class="mx-small mx-muted">Private invitation codes must contain server-issued opaque tokens, never directly grant access based on a URL.</p>
+<div class="mx-qr-utilities">
+<h3>Scan a QR code</h3>
+<button class="mx-btn mx-btn-soft" (click)="scanToggle.emit(!scanning)">{{scanning?'Stop camera':'⌗ Open camera scanner'}}</button>
+<p class="mx-muted mx-small">Scanning requires HTTPS or localhost and camera permission.</p>
+<label>Or paste a link / token<input [(ngModel)]="inputToken" placeholder="Paste QR link or token"/>
+</label>
+<button class="mx-btn mx-btn-soft" [disabled]="!inputToken.trim()||busy" (click)="validate()">Validate code</button>
+<p *ngIf="validatedResult" role="status" class="mx-success">{{validatedResult}}</p>
+</div>
+</section>
+  <section class="mx-qr-preview">
+<p class="mx-eyebrow">PREVIEW</p>
+<div class="mx-qr-preview-card">
+<div class="mx-qr-logo">✳</div>
+<h2>Moments Studio</h2>
+<div class="mx-qr-image">
+<img *ngIf="qrImageUrl" [src]="qrImageUrl" alt="Generated QR code"/>
+<span *ngIf="!qrImageUrl" class="mx-qr-placeholder">▦</span>
+</div>
+<p>Scan to discover the moment</p>
+<small>Share memories, beautifully.</small>
+</div>
+<div class="mx-card-actions">
+<button class="mx-btn mx-btn-primary" [disabled]="!qrImageUrl" (click)="qrDownload.emit()">↓ Download PNG</button>
+<button class="mx-btn mx-btn-soft" [disabled]="!qrImageUrl" (click)="qrShare.emit()">↗ Share</button>
+</div>
+<p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+</section>
+</div>
+<section *ngIf="codes.length" class="mx-qr-history">
+<h2>Your codes</h2>
+<div class="mx-qr-history-grid">
+<button *ngFor="let code of codes;trackBy:id" class="mx-card mx-qr-history-card" (click)="qrSelect.emit(code.id)">
+<img *ngIf="code.imageUrl" [src]="code.imageUrl" alt=""/>
+<span *ngIf="!code.imageUrl">▦</span>
+<strong>{{code.title}}</strong>
+<small>{{code.kind}}</small>
+</button>
+</div>
+</section>
+</section>

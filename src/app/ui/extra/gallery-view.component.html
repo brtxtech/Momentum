@@ -1,0 +1,45 @@
+<section class="mx-page mx-gallery" aria-label="Event photo gallery">
+  <header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">YOUR MEMORIES</p>
+<h1>Gallery</h1>
+<p class="mx-subtitle">A beautiful home for the photos and videos from every occasion.</p>
+</div>
+<label *ngIf="canUpload" class="mx-btn mx-btn-primary mx-file-button">
+<input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple (change)="upload($event)" [disabled]="busy"/>＋ Upload media</label>
+</header>
+  <div class="mx-gallery-toolbar">
+<div class="mx-scroll-x mx-chips">
+<button [class.active]="!activeEventId" (click)="eventChange.emit('')">All events</button>
+<button *ngFor="let e of events;trackBy:id" [class.active]="activeEventId===e.id" (click)="eventChange.emit(e.id)">{{e.title}}</button>
+</div>
+<div class="mx-toolbar-right">
+<button class="mx-text-button" [class.active]="filter==='all'" (click)="filter='all'">All</button>
+<button class="mx-text-button" [class.active]="filter==='image'" (click)="filter='image'">Photos</button>
+<button class="mx-text-button" [class.active]="filter==='video'" (click)="filter='video'">Videos</button>
+<button class="mx-btn mx-btn-soft" (click)="selection=!selection;selected.clear()">{{selection?'Done':'Select'}}</button>
+</div>
+</div>
+  <p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+  <div *ngIf="selection && selected.size" class="mx-batch-bar">{{selected.size}} selected <button class="mx-btn mx-btn-soft" *ngFor="let m of filtered" [hidden]="!selected.has(m.id)" (click)="galleryDownload.emit(m.id)">Download {{m.id.slice(0,4)}}…</button>
+</div>
+  <div class="mx-gallery-grid">
+<article class="mx-gallery-tile" *ngFor="let m of filtered;index as i;trackBy:id" [class.tall]="i%7===0" [class.selected]="selected.has(m.id)">
+<button class="mx-gallery-cover" (click)="open(m)" [attr.aria-label]="m.caption||'Open media'">
+<img [src]="m.thumbUrl||m.url" [alt]="m.caption||'Gallery photo'" loading="lazy"/>
+<span *ngIf="m.type==='video'" class="mx-media-play">▶</span>
+<span *ngIf="selected.has(m.id)" class="mx-tile-check">✓</span>
+</button>
+<div class="mx-gallery-overlay" *ngIf="!selection">
+<span>{{m.caption}}</span>
+<button (click)="galleryDownload.emit(m.id)" aria-label="Download media" title="Download">↓</button>
+<button *ngIf="canUpload" (click)="galleryDelete.emit(m.id)" aria-label="Delete media" title="Delete">×</button>
+</div>
+</article>
+</div>
+  <div class="mx-empty" *ngIf="!loading && !filtered.length">
+<span class="mx-empty-icon">▧</span>
+<b>Your gallery is waiting</b>
+<p>Choose an event and add your favorite photos and videos.</p>
+</div>
+</section>

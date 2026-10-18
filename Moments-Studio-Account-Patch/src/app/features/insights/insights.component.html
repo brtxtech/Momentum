@@ -1,0 +1,23 @@
+<section class="account-page">
+ <header class="ac-heading"><div><p class="ac-eyebrow">CREATOR DASHBOARD</p><h1>Insights</h1><p class="ac-muted">Your activity and audience, calculated from Supabase records.</p></div><button class="ac-button" (click)="reload()" [disabled]="loading()">↻ Refresh</button></header>
+ <div class="ac-error" role="alert" *ngIf="error()">{{error()}}</div><p class="ac-muted" *ngIf="loading()">Fetching your metrics…</p>
+ <div class="ac-metrics" *ngIf="!loading()">
+  <div class="ac-metric"><small>Publications</small><strong>{{counts().posts | number}}</strong><span>Total owned posts</span></div>
+  <div class="ac-metric"><small>Followers</small><strong>{{counts().followers | number}}</strong><span>Approved followers</span></div>
+  <div class="ac-metric"><small>Following</small><strong>{{counts().following | number}}</strong><span>Approved following</span></div>
+  <div class="ac-metric"><small>Saved</small><strong>{{counts().saved | number}}</strong><span>Private bookmarks</span></div>
+  <div class="ac-metric"><small>Events</small><strong>{{counts().events | number}}</strong><span>Events you own</span></div>
+ </div>
+ <section class="ac-panel ac-chart-panel" *ngIf="!loading()">
+  <div class="ac-chart-heading"><div><h2>Publishing activity</h2><p class="ac-muted">{{total()}} posts in the last {{range()}} UTC days</p></div>
+   <div class="ac-filter" role="group" aria-label="Chart period">
+    <button [class.selected]="range()===7" (click)="choose(7)">7 days</button><button [class.selected]="range()===14" (click)="choose(14)">14 days</button><button [class.selected]="range()===30" (click)="choose(30)">30 days</button>
+   </div></div>
+  <div class="ac-chart" role="img" [attr.aria-label]="'Daily post counts over '+range()+' days'">
+   <div *ngFor="let day of days()" class="ac-bar-column" [title]="day.date+': '+day.count+' posts'">
+    <span class="ac-bar" [style.height.%]="height(day.count,max())" [attr.aria-label]="day.count+' posts on '+day.date"></span>
+   </div>
+  </div>
+  <p class="ac-muted ac-chart-caption">Dates are grouped in UTC. Each day is counted directly in the database; no fabricated engagement statistics.</p>
+ </section>
+</section>

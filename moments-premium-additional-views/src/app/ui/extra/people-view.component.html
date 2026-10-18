@@ -1,0 +1,46 @@
+<section class="mx-page mx-people" aria-label="Discover people">
+  <header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">COMMUNITY</p>
+<h1>Discover people</h1>
+<p class="mx-subtitle">Find creators, friends, and the people behind every moment.</p>
+</div>
+<span class="mx-ornament">✧</span>
+</header>
+  <div class="mx-search-field mx-search-wide">
+<span>⌕</span>
+<input type="search" aria-label="Find an account" placeholder="Search by username or name" [ngModel]="term" (ngModelChange)="onSearch($event)">
+</div>
+  <nav class="mx-segment-tabs" aria-label="People filters">
+<button *ngFor="let t of tabs" [class.active]="tab===t.id" (click)="changeTab(t.id)">{{t.label}} <span *ngIf="t.id==='requests' && followRequests.length" class="mx-count">{{followRequests.length}}</span>
+</button>
+</nav>
+  <p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+  <div class="mx-people-grid">
+<article *ngFor="let p of results;trackBy:id" class="mx-person-card">
+<button class="mx-person-avatar" (click)="userOpen.emit(p.id)" [attr.aria-label]="'View '+p.username">
+<img [src]="p.avatarUrl||avatar" alt="" />
+</button>
+<button class="mx-person-name" (click)="userOpen.emit(p.id)">
+<b>{{p.username}} <span *ngIf="p.verified" class="mx-blue" aria-label="Verified">✦</span>
+</b>
+<small>{{p.displayName}}</small>
+</button>
+<p class="mx-person-bio">{{p.bio || 'Discover their latest moments.'}}</p>
+<small class="mx-muted">{{p.isPrivate?'Private account':'Public account'}} <ng-container *ngIf="p.followers!==undefined">· {{p.followers | number}} followers</ng-container>
+</small>
+<div class="mx-person-actions" *ngIf="tab!=='requests'">
+<button class="mx-btn" [class.mx-btn-primary]="!p.following && !p.requested" [class.mx-btn-soft]="p.following||p.requested" [disabled]="busy" (click)="followToggle.emit(p.id)">{{p.following?'Following':p.requested?'Requested':'Follow'}}</button>
+</div>
+<div class="mx-person-actions" *ngIf="tab==='requests'">
+<button class="mx-btn mx-btn-primary" [disabled]="busy" (click)="requestApprove.emit(p.id)">Confirm</button>
+<button class="mx-btn mx-btn-soft" [disabled]="busy" (click)="requestReject.emit(p.id)">Delete</button>
+</div>
+</article>
+</div>
+  <div *ngIf="!loading && !results.length" class="mx-empty">
+<span class="mx-empty-icon">♧</span>
+<b>No people found</b>
+<p>Try a different search or explore another category.</p>
+</div>
+</section>

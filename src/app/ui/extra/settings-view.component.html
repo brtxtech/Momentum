@@ -1,0 +1,134 @@
+<section class="mx-page mx-settings" aria-label="Account settings">
+<header class="mx-page-heading">
+<div>
+<p class="mx-eyebrow">YOUR EXPERIENCE</p>
+<h1>Settings</h1>
+<p class="mx-subtitle">Make Moments Studio feel entirely yours.</p>
+</div>
+</header>
+<div class="mx-settings-layout">
+<nav class="mx-settings-nav" aria-label="Settings sections">
+<button *ngFor="let s of sections" (click)="section=s.id" [class.active]="section===s.id">
+<span>{{s.icon}}</span>{{s.label}} <span class="mx-ml-auto">›</span>
+</button>
+<hr/>
+<button (click)="accountExport.emit()">↓ Download your data</button>
+<button (click)="logout.emit()">↗ Log out</button>
+</nav>
+<div class="mx-settings-panel mx-card">
+<p *ngIf="error" role="alert" class="mx-inline-error">{{error}}</p>
+<p *ngIf="success" role="status" class="mx-success">{{success}}</p>
+<ng-container *ngIf="draft as v; else noSettings">
+  <div *ngIf="section==='account'">
+<h2>Edit your profile</h2>
+<p class="mx-muted">Share a little about who you are.</p>
+<div class="mx-form-stack">
+<label>Display name<input [(ngModel)]="v.displayName" maxlength="80"/>
+</label>
+<label>Username<input [value]="v.username" disabled title="Username change requires separate availability checks"/>
+</label>
+<label>Email<input [value]="v.email" disabled title="Email changes require reauthentication"/>
+</label>
+<label>Biography<textarea [(ngModel)]="v.bio" rows="4" maxlength="500">
+</textarea>
+</label>
+</div>
+</div>
+  <div *ngIf="section==='privacy'">
+<h2>Privacy and visibility</h2>
+<p class="mx-muted">Control who can see and interact with your moments.</p>
+<label class="mx-toggle-row">
+<span>
+<b>Private account</b>
+<small>Only approved followers can view protected posts.</small>
+</span>
+<input type="checkbox" [(ngModel)]="v.isPrivate"/>
+</label>
+<button class="mx-settings-link" (click)="blockedAccountsOpen.emit()">Blocked accounts <span>→</span>
+</button>
+<p class="mx-small mx-muted">Privacy settings require server-side authorization policies; toggles alone do not secure content.</p>
+</div>
+  <div *ngIf="section==='notifications'">
+<h2>Notification preferences</h2>
+<p class="mx-muted">Choose how you want to hear from us.</p>
+<label class="mx-toggle-row">
+<span>
+<b>Activity emails</b>
+<small>Likes, replies and follow activity</small>
+</span>
+<input type="checkbox" [(ngModel)]="v.activityEmails"/>
+</label>
+<label class="mx-toggle-row">
+<span>
+<b>Message emails</b>
+<small>New conversations and replies</small>
+</span>
+<input type="checkbox" [(ngModel)]="v.messageEmails"/>
+</label>
+<label class="mx-toggle-row">
+<span>
+<b>Browser notifications</b>
+<small>Requires your browser's permission</small>
+</span>
+<input type="checkbox" [(ngModel)]="v.pushEnabled"/>
+</label>
+</div>
+  <div *ngIf="section==='appearance'">
+<h2>Look and feel</h2>
+<p class="mx-muted">A workspace designed around your preferences.</p>
+<div class="mx-field-label">Color theme</div>
+<div class="mx-appearance-grid">
+<button *ngFor="let t of ['light','dark','system']" class="mx-appearance-choice" [class.active]="v.theme===t" (click)="v.theme=$any(t)">
+<span [class]="'mx-appearance-'+t">
+</span>
+<b>{{t | titlecase}}</b>
+</button>
+</div>
+<label>Language<select [(ngModel)]="v.language">
+<option value="en">English</option>
+<option value="es">Español</option>
+<option value="fr">Français</option>
+</select>
+</label>
+<label class="mx-toggle-row">
+<span>
+<b>Reduce motion</b>
+<small>Minimize transitions and animated effects.</small>
+</span>
+<input type="checkbox" [(ngModel)]="v.reducedMotion"/>
+</label>
+</div>
+  <div *ngIf="section==='security'">
+<h2>Security</h2>
+<p class="mx-muted">Protect your account with strong authentication.</p>
+<div class="mx-form-stack">
+<label>New password<input [(ngModel)]="password" type="password" minlength="12" autocomplete="new-password"/>
+</label>
+<label>Confirm new password<input [(ngModel)]="passwordConfirm" type="password" autocomplete="new-password"/>
+</label>
+<button class="mx-btn mx-btn-soft" [disabled]="busy||password.length<12||password!==passwordConfirm" (click)="changePassword()">Change password</button>
+</div>
+<button class="mx-settings-link" (click)="mfaManage.emit()">Two-factor authentication <span>→</span>
+</button>
+<button class="mx-settings-link" (click)="sessionManagementOpen.emit()">Active sessions <span>→</span>
+</button>
+<div class="mx-danger-zone">
+<strong>Danger zone</strong>
+<p>Deleting an account requires a secure, server-confirmed workflow.</p>
+<button class="mx-btn mx-btn-danger" (click)="accountDeletionRequest.emit()">Request account deletion</button>
+</div>
+</div>
+  <div class="mx-settings-footer" *ngIf="section!=='security'">
+<button class="mx-btn mx-btn-primary" [disabled]="busy" (click)="save()">{{busy?'Saving…':'Save changes'}}</button>
+<small class="mx-muted">Changes take effect after the backend confirms success.</small>
+</div>
+</ng-container>
+<ng-template #noSettings>
+<div class="mx-empty">
+<b>Account settings unavailable</b>
+<p>Sign in and load your settings to continue.</p>
+</div>
+</ng-template>
+</div>
+</div>
+</section>
