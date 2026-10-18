@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.0",
-    "@angular/cli": "^18.2.0",
+    "@angular/cli": "^22.2.3",
     "@angular/compiler-cli": "^18.2.0",
     "@types/qrcode": "^1.5.5",
     "typescript": "~5.5.4"
