@@ -1,0 +1,30 @@
+{
+  "feature_lines": {
+    "feed": 1006,
+    "explore": 1007,
+    "reels": 1004,
+    "stories": 1006,
+    "messages": 1009,
+    "notifications": 1004,
+    "people": 1006,
+    "events": 1012,
+    "gallery": 1035,
+    "invitations": 1010,
+    "qr": 1024,
+    "create": 1018,
+    "profile": 1006,
+    "saved": 1006,
+    "insights": 1006,
+    "settings": 1041,
+    "help": 1001
+  },
+  "feature_typeScript_lines": 17201,
+  "files": 204,
+  "test_count": 49,
+  "passed_tests": 49,
+  "logic_typecheck": "passed",
+  "angular_build": "not_verified_missing_ng",
+  "database_integration": "not_run",
+  "security": "not_approved",
+  "source_lines": 18175
+}

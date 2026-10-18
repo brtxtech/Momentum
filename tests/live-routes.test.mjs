@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+test('all feature routes present and social workspace backed',()=>{const routes=fs.readFileSync('src/app/app.routes.ts','utf8');for(const name of ['feed','reels','stories','messages','notifications','people','events','gallery','invitations','profile','saved','insights','settings','help','explore']){assert.match(routes,new RegExp(`path: '${name}', component: SocialWorkspaceComponent`));}});
+test('create page publishes through cloud service',()=>{const code=fs.readFileSync('src/app/features/create/create.component.ts','utf8');assert.match(code,/api.createPost/);assert.match(code,/type="file"/);});
+test('atomic chat creator and notification triggers supplied',()=>{const sql=fs.readFileSync('supabase/migrations/003_functional_security.sql','utf8');assert.match(sql,/public.start_conversation/);assert.match(sql,/notify_like/);assert.match(sql,/notify_comment/);assert.match(sql,/notify_follow/);});
+test('no production readiness claims',()=>{const readme=fs.readFileSync('README.md','utf8');assert.match(readme,/not an Instagram-equivalent production service/);});

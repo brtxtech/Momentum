@@ -1,0 +1,155 @@
+{
+  "feed": {
+    "table": "posts",
+    "description": "published posts",
+    "primary_field": "caption",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "text,image,video",
+    "states": "draft,published,deleted"
+  },
+  "explore": {
+    "table": "posts",
+    "description": "discovered content",
+    "primary_field": "caption",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "posts,profiles,events",
+    "states": "recent,relevant,popular"
+  },
+  "reels": {
+    "table": "posts",
+    "description": "short-form video",
+    "primary_field": "caption",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "video,image",
+    "states": "draft,published,removed"
+  },
+  "stories": {
+    "table": "stories",
+    "description": "expiring stories",
+    "primary_field": "media_path",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "image,video",
+    "states": "active,expired,deleted"
+  },
+  "messages": {
+    "table": "messages",
+    "description": "private messages",
+    "primary_field": "body",
+    "owner_field": "sender_id",
+    "timestamp_field": "created_at",
+    "categories": "text,attachment",
+    "states": "sent,received,deleted"
+  },
+  "notifications": {
+    "table": "notifications",
+    "description": "activity alerts",
+    "primary_field": "body",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "like,comment,follow,invite",
+    "states": "unread,read,archived"
+  },
+  "people": {
+    "table": "profiles",
+    "description": "social profiles",
+    "primary_field": "display_name",
+    "owner_field": "id",
+    "timestamp_field": "created_at",
+    "categories": "public,private",
+    "states": "pending,approved,blocked"
+  },
+  "events": {
+    "table": "events",
+    "description": "wedding and social events",
+    "primary_field": "title",
+    "owner_field": "owner_id",
+    "timestamp_field": "created_at",
+    "categories": "public,private",
+    "states": "draft,invited,accepted,cancelled"
+  },
+  "gallery": {
+    "table": "event_media",
+    "description": "private event gallery photos",
+    "primary_field": "storage_path",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "jpeg,png,webp",
+    "states": "uploaded,hidden,deleted"
+  },
+  "invitations": {
+    "table": "invitations",
+    "description": "saved editable invitations",
+    "primary_field": "design",
+    "owner_field": "owner_id",
+    "timestamp_field": "created_at",
+    "categories": "classic,modern,garden",
+    "states": "draft,sent,revoked"
+  },
+  "qr": {
+    "table": "event_members",
+    "description": "QR guest entries",
+    "primary_field": "event_id",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "event,guest,checkin",
+    "states": "created,redeemed,expired"
+  },
+  "create": {
+    "table": "posts",
+    "description": "new content composition",
+    "primary_field": "caption",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "text,image,video",
+    "states": "draft,uploading,published"
+  },
+  "profile": {
+    "table": "profiles",
+    "description": "account profiles",
+    "primary_field": "display_name",
+    "owner_field": "id",
+    "timestamp_field": "created_at",
+    "categories": "public,private",
+    "states": "active,private,suspended"
+  },
+  "saved": {
+    "table": "saved_posts",
+    "description": "post bookmarks",
+    "primary_field": "post_id",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "post,collection",
+    "states": "saved,removed"
+  },
+  "insights": {
+    "table": "posts",
+    "description": "account activity metrics",
+    "primary_field": "caption",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "posts,followers,events",
+    "states": "day,week,month"
+  },
+  "settings": {
+    "table": "user_preferences",
+    "description": "persistent user preferences",
+    "primary_field": "theme",
+    "owner_field": "user_id",
+    "timestamp_field": "updated_at",
+    "categories": "light,dark,system",
+    "states": "default,custom,reset"
+  },
+  "help": {
+    "table": "support_tickets",
+    "description": "customer support cases",
+    "primary_field": "subject",
+    "owner_field": "user_id",
+    "timestamp_field": "created_at",
+    "categories": "access,account,events,media",
+    "states": "open,answered,resolved"
+  }
+}

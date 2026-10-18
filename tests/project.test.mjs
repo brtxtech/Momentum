@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync,readdirSync} from 'node:fs';import {join} from 'node:path';
+const root=process.cwd();const read=p=>readFileSync(join(root,p),'utf8');
+test('all routed features have dedicated source files',()=>{const routes=read('src/app/app.routes.ts');const slugs=['feed','explore','reels','stories','messages','notifications','people','events','gallery','invitations','qr','create','profile','saved','insights','settings','help'];for(const slug of slugs){assert.ok(routes.includes(`path: \'${slug}\'`));assert.ok(existsSync(join(root,`src/app/features/${slug}/${slug}.component.ts`)));}});
+test('no dangerously bound innerHTML in feature components',()=>{for(const dir of readdirSync(join(root,'src/app/features'))){const file=read(`src/app/features/${dir}/${dir}.component.ts`);assert.ok(!file.includes('[innerHTML]'),dir)}});
+test('no service role key in client source',()=>{for(const dir of readdirSync(join(root,'src/app/features'))){const file=read(`src/app/features/${dir}/${dir}.component.ts`);assert.ok(!file.includes('service_role'),dir)}});
+test('responsive breakpoints and print styles exist',()=>{const css=read('src/styles.css');for(const query of ['max-width:1250px','max-width:900px','max-width:620px','@media print'])assert.ok(css.includes(query))});
+test('privacy warnings and security review exist',()=>{assert.ok(read('docs/SECURITY-REVIEW.md').includes('Not verified'));assert.ok(read('src/app/core/supabase.service.ts').includes('createSignedUrl'))});
